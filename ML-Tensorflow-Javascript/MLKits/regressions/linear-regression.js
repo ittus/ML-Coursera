@@ -3,10 +3,9 @@ const _ = require('lodash');
 
 class LinearRegression {
   constructor (features, labels, options) {
-    this.features = tf.tensor(features);
+    this.features = this.processFeatures(features);
     this.labels = tf.tensor(labels);
 
-    this.features = tf.ones([this.features.shape[0], 1]).concat(this.features, 1);
     this.options = Object.assign({
       learningRate: 0.1,
       iterations: 1000
@@ -32,10 +31,9 @@ class LinearRegression {
   }
 
   test (testFeatures, testLabels) {
-    testFeatures = tf.tensor(testFeatures);
+    testFeatures = this.processFeatures(testFeatures);
     testLabels = tf.tensor(testLabels);
 
-    testFeatures = tf.ones([testFeatures.shape[0], 1]).concat(testFeatures, 1);
     const predictions = testFeatures.matMul(this.weights);
 
     const res = testLabels.sub(predictions)
@@ -48,6 +46,28 @@ class LinearRegression {
       .get()
 
     return 1 - res / tot;
+  }
+
+  processFeatures (features) {
+    features = tf.tensor(features);
+
+    if (this.mean && this.variance) {
+      features = features.sub(this.mean).div(this.variance.pow(0.5));
+    } else {
+      features = this.standardize(features);
+    }
+
+    features = tf.ones([features.shape[0], 1]).concat(features, 1)
+
+    return features
+  }
+
+  standardize (features) {
+    const { mean, variance } = tf.moments(features, 0);
+    this.mean = mean;
+    this.variance = variance;
+
+    return features.sub(mean).div(variance.pow(0.5));
   }
 }
 
