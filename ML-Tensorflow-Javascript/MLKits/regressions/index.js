@@ -16,4 +16,5 @@ const regression = new LinearRegression(features, labels, {
 });
 
 regression.train()
-console.log(regression.weights.print())
+const r2 = regression.test(testFeatures, testLabels)
+console.log('accuracy: ', r2)
