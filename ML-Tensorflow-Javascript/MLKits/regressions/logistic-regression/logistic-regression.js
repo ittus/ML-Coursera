@@ -5,7 +5,7 @@ class LogisticRegression {
   constructor (features, labels, options) {
     this.features = this.processFeatures(features);
     this.labels = tf.tensor(labels);
-    this.mseHistory = [];
+    this.costHistory = [];
 
     this.options = Object.assign({
       learningRate: 0.1,
@@ -35,7 +35,7 @@ class LogisticRegression {
         );
         this.gradientDescent(featureSlice, labelSlice);
       }
-      this.recordMSE();
+      this.recordCost();
       this.updateLearningRate();
     }
   }
@@ -86,23 +86,29 @@ class LogisticRegression {
     return features.sub(mean).div(variance.pow(0.5));
   }
 
-  recordMSE () {
-    const mse = this.features
-      .matMul(this.weights)
-      .sub(this.labels)
-      .pow(2)
-      .sum()
-      .div(this.features.shape[0])
-      .get()
-    this.mseHistory.unshift(mse);
+  recordCost () {
+    const guesses = this.features.matMul(this.weights).sigmoid()
+    const termOne = this.labels
+      .transpose()
+      .matMul(guesses.log())
+    const termTwo = this.labels
+      .mul(-1)
+      .add(1)
+      .transpose()
+      .matMul(
+        guesses.mul(-1).add(1).log()
+      )
+
+    const cost = termOne.add(termTwo).div(this.features.shape[0]).mul(-1).get(0, 0)
+    this.costHistory.unshift(cost);
   }
 
   updateLearningRate () {
-    if (this.mseHistory.length < 2) {
+    if (this.costHistory.length < 2) {
       return;
     }
 
-    if (this.mseHistory[0] > this.mseHistory[1]) {
+    if (this.costHistory[0] > this.costHistory[1]) {
       this.options.learningRate /= 2;
     } else {
       this.options.learningRate *= 1.05;
