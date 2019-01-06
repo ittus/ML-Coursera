@@ -9,7 +9,8 @@ class LogisticRegression {
 
     this.options = Object.assign({
       learningRate: 0.1,
-      iterations: 1000
+      iterations: 1000,
+      decisionBoundary: 0.5
     }, options);
 
     this.weights = tf.zeros([this.features.shape[1], 1]);
@@ -50,7 +51,7 @@ class LogisticRegression {
   }
 
   test (testFeatures, testLabels) {
-    const predictions = this.predict(testFeatures).round()
+    const predictions = this.predict(testFeatures)
     testLabels = tf.tensor(testLabels)
 
     const incorrect = predictions.sub(testLabels).abs().sum().get();
@@ -58,7 +59,9 @@ class LogisticRegression {
   }
 
   predict (observations) {
-    return this.processFeatures(observations).matMul(this.weights).sigmoid();
+    return this.processFeatures(observations).matMul(this.weights).sigmoid()
+      .greater(this.options.decisionBoundary)
+      .cast('float32')
   }
 
   processFeatures (features) {

@@ -18,7 +18,8 @@ const { features, labels, testFeatures, testLabels } = loadCSV('../data/cars.csv
 const regression = new LogisticRegression(features, labels, {
   learningRate: 0.5,
   iterations: 100,
-  batchSize: 50
+  batchSize: 50,
+  decisionBoundary: 0.6
 });
 
 regression.train();
