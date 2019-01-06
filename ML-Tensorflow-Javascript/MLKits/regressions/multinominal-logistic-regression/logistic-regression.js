@@ -41,7 +41,7 @@ class LogisticRegression {
   }
 
   gradientDescent (features, labels) {
-    const currentGuesses = features.matMul(this.weights).sigmoid();
+    const currentGuesses = features.matMul(this.weights).softmax();
     const differences = currentGuesses.sub(labels);
     const slopes = features.transpose()
       .matMul(differences)
@@ -59,7 +59,7 @@ class LogisticRegression {
   }
 
   predict (observations) {
-    return this.processFeatures(observations).matMul(this.weights).sigmoid()
+    return this.processFeatures(observations).matMul(this.weights).softmax()
       .greater(this.options.decisionBoundary)
       .cast('float32')
   }
@@ -87,7 +87,7 @@ class LogisticRegression {
   }
 
   recordCost () {
-    const guesses = this.features.matMul(this.weights).sigmoid()
+    const guesses = this.features.matMul(this.weights).softmax()
     const termOne = this.labels
       .transpose()
       .matMul(guesses.log())
