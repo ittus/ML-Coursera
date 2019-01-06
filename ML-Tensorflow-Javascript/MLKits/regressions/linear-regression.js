@@ -67,6 +67,10 @@ class LinearRegression {
     return 1 - res / tot;
   }
 
+  predict (observations) {
+    return this.processFeatures(observations).matMul(this.weights);
+  }
+
   processFeatures (features) {
     features = tf.tensor(features);
 

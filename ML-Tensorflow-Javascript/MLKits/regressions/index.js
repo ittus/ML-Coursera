@@ -18,10 +18,16 @@ const regression = new LinearRegression(features, labels, {
 });
 
 regression.train()
-const r2 = regression.test(testFeatures, testLabels)
-plot({
-  x: regression.mseHistory.reverse(),
-  xLabel: 'Iteration #',
-  yLabel: 'Mean Squared Error'
-});
-console.log('R2 is: ', r2)
+// const r2 = regression.test(testFeatures, testLabels)
+// plot({
+//   x: regression.mseHistory.reverse(),
+//   xLabel: 'Iteration #',
+//   yLabel: 'Mean Squared Error'
+// });
+// console.log('R2 is: ', r2)
+
+regression.predict([
+  [120, 1.9, 250],
+  [120, 1.8, 240],
+  [120, 1.7, 380]
+]).print()
