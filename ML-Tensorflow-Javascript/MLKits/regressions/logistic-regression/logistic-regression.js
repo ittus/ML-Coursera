@@ -1,7 +1,7 @@
 const tf = require('@tensorflow/tfjs');
 const _ = require('lodash');
 
-class LinearRegression {
+class LogisticRegression {
   constructor (features, labels, options) {
     this.features = this.processFeatures(features);
     this.labels = tf.tensor(labels);
@@ -117,4 +117,4 @@ class LinearRegression {
   }
 }
 
-module.exports = LinearRegression;
+module.exports = LogisticRegression;
